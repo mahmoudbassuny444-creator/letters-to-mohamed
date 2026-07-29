@@ -125,19 +125,22 @@ export default function Home() {
   return (
     <>
       <style jsx global>{`
-        @keyframes movingGradient {
+        @keyframes gradientBackground {
           0% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
           100% { background-position: 0% 50%; }
         }
+        .animated-bg {
+          background: linear-gradient(-45deg, #090d16, #1e1b4b, #0f172a, #311042, #0284c7);
+          background-size: 400% 400%;
+          animation: gradientBackground 12s ease infinite;
+        }
       `}</style>
 
       <main
+        className="animated-bg"
         style={{
           minHeight: "100vh",
-          background: "linear-gradient(-45deg, #0b0f19, #1e1b4b, #0f172a, #311042, #172554)",
-          backgroundSize: "400% 400%",
-          animation: "movingGradient 10s ease infinite",
           color: "#fff",
           padding: "40px 20px",
           fontFamily: "system-ui, sans-serif",
