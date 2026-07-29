@@ -35,7 +35,6 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
   
-  // نظام الأدمن والباسورد المحدث
   const [isAdmin, setIsAdmin] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
@@ -84,6 +83,7 @@ export default function Home() {
       setRole("");
       setMessage("");
       fetchLetters();
+      alert("تم إرسال رسالتك للمهندس محمد حازم بنجاح! 🚀");
     } catch (error) {
       console.error("Error adding letter:", error);
     } finally {
@@ -127,13 +127,6 @@ export default function Home() {
     } else {
       alert("كلمة المرور غير صحيحة ❌");
     }
-  };
-
-  const handleRandomLetter = () => {
-    if (letters.length === 0) return;
-    const randomIndex = Math.floor(Math.random() * letters.length);
-    const randomMsg = letters[randomIndex];
-    alert(`💌 رسالة من: ${randomMsg.senderName} (${randomMsg.role})\n\n"${randomMsg.message}"`);
   };
 
   return (
@@ -262,25 +255,8 @@ export default function Home() {
               رسائل تيم Insider للمهندس محمد حازم ❤️
             </h1>
             <p style={{ color: "#94a3b8", fontSize: "0.95rem" }}>
-              شارك بكلمتك أو ذكرياتك مع المهندس محمد حازم
+              شارك بكلمتك أو ذكرياتك مع المهندس محمد حازم (الرسائل سرية وتصل للمهندس فقط)
             </p>
-
-            <button
-              onClick={handleRandomLetter}
-              style={{
-                marginTop: "15px",
-                background: "rgba(255, 255, 255, 0.08)",
-                border: "1px solid rgba(255, 255, 255, 0.15)",
-                color: "#38bdf8",
-                padding: "8px 20px",
-                borderRadius: "25px",
-                cursor: "pointer",
-                fontSize: "0.9rem",
-                backdropFilter: "blur(10px)"
-              }}
-            >
-              🎲 اقرأ رسالة عشوائية من التيم!
-            </button>
           </header>
 
           <form
@@ -341,37 +317,6 @@ export default function Home() {
               />
             </div>
 
-            <div style={{ marginBottom: "16px" }}>
-              <label style={{ display: "block", marginBottom: "8px", fontSize: "0.85rem", color: "#94a3b8" }}>
-                اختر لون كارت الرسالة 🎨
-              </label>
-              <div style={{ display: "flex", gap: "10px" }}>
-                {[
-                  { name: "كحلي", hex: "rgba(15, 23, 42, 0.85)" },
-                  { name: "بنفسجي", hex: "rgba(76, 29, 149, 0.85)" },
-                  { name: "نيلي", hex: "rgba(30, 58, 138, 0.85)" },
-                  { name: "كرمزي", hex: "rgba(131, 24, 67, 0.85)" },
-                  { name: "زيتي", hex: "rgba(6, 78, 59, 0.85)" },
-                ].map((c) => (
-                  <button
-                    type="button"
-                    key={c.hex}
-                    onClick={() => setCardColor(c.hex)}
-                    style={{
-                      width: "28px",
-                      height: "28px",
-                      borderRadius: "50%",
-                      background: c.hex,
-                      border: cardColor === c.hex ? "2px solid #38bdf8" : "1px solid rgba(255,255,255,0.2)",
-                      cursor: "pointer",
-                      transform: cardColor === c.hex ? "scale(1.2)" : "scale(1)"
-                    }}
-                    title={c.name}
-                  />
-                ))}
-              </div>
-            </div>
-
             <div style={{ marginBottom: "20px" }}>
               <label style={{ display: "block", marginBottom: "8px", fontSize: "0.9rem", color: "#e2e8f0" }}>
                 الرسالة:
@@ -395,30 +340,6 @@ export default function Home() {
               />
             </div>
 
-            {message.trim() && (
-              <div style={{ marginBottom: "20px" }}>
-                <span style={{ fontSize: "0.88rem", color: "#38bdf8", display: "block", marginBottom: "6px" }}>
-                  👀 معاينة شكل الرسالة:
-                </span>
-                <div
-                  style={{
-                    background: cardColor,
-                    border: "1px solid rgba(255,255,255,0.15)",
-                    borderRadius: "14px",
-                    padding: "16px"
-                  }}
-                >
-                  <div style={{ fontWeight: "bold", fontSize: "1rem", color: "#38bdf8" }}>
-                    {senderName.trim() || "فاعل خير 🕵️‍♂️"}
-                  </div>
-                  <div style={{ fontSize: "0.8rem", color: "#94a3b8", marginBottom: "8px" }}>
-                    {role.trim() || "عضو في التيم"}
-                  </div>
-                  <p style={{ margin: 0, whiteSpace: "pre-wrap", fontSize: "0.95rem" }}>{message}</p>
-                </div>
-              </div>
-            )}
-
             <button
               type="submit"
               disabled={loading}
@@ -438,27 +359,15 @@ export default function Home() {
             </button>
           </form>
 
-          <section>
-            <h2 style={{ fontSize: "1.3rem", marginBottom: "20px", fontWeight: "bold" }}>
-              الرسائل والذكريات 💬
-            </h2>
+          {isAdmin && (
+            <section>
+              <h2 style={{ fontSize: "1.3rem", marginBottom: "20px", fontWeight: "bold" }}>
+                حائط الرسائل (لوحة التحكم الخاصة بالأدمن) 💬
+              </h2>
 
-            {!isAdmin ? (
-              <div style={{
-                background: "rgba(15, 23, 42, 0.6)",
-                border: "1px dashed rgba(255,255,255,0.2)",
-                borderRadius: "14px",
-                padding: "30px",
-                textAlign: "center",
-                color: "#94a3b8"
-              }}>
-                <p style={{ fontSize: "1.05rem", marginBottom: "10px" }}>🔒 حائط الرسائل مخفي حالياً لحفظ الخصوصية.</p>
-                <p style={{ fontSize: "0.85rem" }}>إذا كنت المهندس محمد حازم أو الأدمن، اضغط على زر <b>"دخول أدمن"</b> فوق خالص وأدخل كلمة المرور لقراءة الحائط بالكامل.</p>
-              </div>
-            ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 <div style={{ background: "rgba(34, 197, 94, 0.15)", border: "1px solid #22c55e", padding: "10px 15px", borderRadius: "10px", color: "#22c55e", fontSize: "0.9rem", textAlign: "center" }}>
-                  🔓 أنت مسجل كأدمن الآن. عدد الرسائل الكلي: ({letters.length})
+                  🔓 أهلاً بك يا بشمهندس! عدد الرسائل الكلي: ({letters.length})
                 </div>
 
                 {letters.map((item) => (
@@ -523,8 +432,9 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-            )}
-          </section>
+            </section>
+          )}
+
         </div>
       </main>
     </>
