@@ -30,11 +30,10 @@ export default function Home() {
   const [senderName, setSenderName] = useState("");
   const [role, setRole] = useState("");
   const [message, setMessage] = useState("");
-  const [cardColor, setCardColor] = useState("rgba(15, 23, 42, 0.65)");
+  const [cardColor, setCardColor] = useState("rgba(15, 23, 42, 0.75)");
   const [letters, setLetters] = useState<Letter[]>([]);
   const [loading, setLoading] = useState(false);
   const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
-  const [isAdmin, setIsAdmin] = useState(false);
 
   const fetchLetters = async () => {
     try {
@@ -69,7 +68,6 @@ export default function Home() {
         createdAt: serverTimestamp(),
       });
 
-      // أنيميشن الـ Confetti 🎉
       confetti({
         particleCount: 120,
         spread: 80,
@@ -103,15 +101,6 @@ export default function Home() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    try {
-      await deleteDoc(doc(db, "letters", id));
-      setLetters((prev) => prev.filter((item) => item.id !== id));
-    } catch (error) {
-      console.error("Error deleting letter:", error);
-    }
-  };
-
   const handleRandomLetter = () => {
     if (letters.length === 0) return;
     const randomIndex = Math.floor(Math.random() * letters.length);
@@ -121,24 +110,20 @@ export default function Home() {
 
   return (
     <>
-      {/* ستايل الأنيميشن الخاص بالخلفية المتحركة */}
       <style jsx global>{`
-        @keyframes gradientBG {
+        @keyframes movingGradient {
           0% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
           100% { background-position: 0% 50%; }
         }
-        .animated-bg {
-          background: linear-gradient(-45deg, #0b0f19, #1e1b4b, #0f172a, #311042);
-          background-size: 400% 400%;
-          animation: gradientBG 12s ease infinite;
-        }
       `}</style>
 
       <main
-        className="animated-bg"
         style={{
           minHeight: "100vh",
+          background: "linear-gradient(-45deg, #0b0f19, #1e1b4b, #0f172a, #311042, #172554)",
+          backgroundSize: "400% 400%",
+          animation: "movingGradient 10s ease infinite",
           color: "#fff",
           padding: "40px 20px",
           fontFamily: "system-ui, sans-serif",
@@ -147,7 +132,6 @@ export default function Home() {
       >
         <div style={{ maxWidth: "650px", margin: "0 auto" }}>
           
-          {/* البادج العلوي */}
           <div style={{ textAlign: "center", marginBottom: "12px" }}>
             <span
               style={{
@@ -163,7 +147,6 @@ export default function Home() {
             </span>
           </div>
 
-          {/* العنوان والوصف */}
           <header style={{ textAlign: "center", marginBottom: "25px" }}>
             <h1 style={{ fontSize: "2rem", fontWeight: "bold", marginBottom: "10px" }}>
               رسائل تيم Insider للمهندس محمد حازم ❤️
@@ -172,7 +155,6 @@ export default function Home() {
               شارك بكلمتك أو ذكرياتك مع المهندس محمد حازم
             </p>
 
-            {/* زرار رسالة عشوائية */}
             <button
               onClick={handleRandomLetter}
               style={{
@@ -184,19 +166,17 @@ export default function Home() {
                 borderRadius: "25px",
                 cursor: "pointer",
                 fontSize: "0.9rem",
-                backdropFilter: "blur(10px)",
-                transition: "all 0.3s"
+                backdropFilter: "blur(10px)"
               }}
             >
               🎲 اقرأ رسالة عشوائية من التيم!
             </button>
           </header>
 
-          {/* نموذج كارت الرسالة */}
           <form
             onSubmit={handleSubmit}
             style={{
-              background: "rgba(15, 23, 42, 0.65)",
+              background: "rgba(15, 23, 42, 0.75)",
               backdropFilter: "blur(16px)",
               border: "1px solid rgba(56, 189, 248, 0.2)",
               borderRadius: "20px",
@@ -251,18 +231,17 @@ export default function Home() {
               />
             </div>
 
-            {/* اختيار لون الكارت */}
             <div style={{ marginBottom: "16px" }}>
               <label style={{ display: "block", marginBottom: "8px", fontSize: "0.85rem", color: "#94a3b8" }}>
                 اختر لون كارت الرسالة 🎨
               </label>
               <div style={{ display: "flex", gap: "10px" }}>
                 {[
-                  { name: "كحلي", hex: "rgba(15, 23, 42, 0.75)" },
-                  { name: "بنفسجي", hex: "rgba(76, 29, 149, 0.75)" },
-                  { name: "نيلي", hex: "rgba(30, 58, 138, 0.75)" },
-                  { name: "كرمزي", hex: "rgba(131, 24, 67, 0.75)" },
-                  { name: "زيتي", hex: "rgba(6, 78, 59, 0.75)" },
+                  { name: "كحلي", hex: "rgba(15, 23, 42, 0.85)" },
+                  { name: "بنفسجي", hex: "rgba(76, 29, 149, 0.85)" },
+                  { name: "نيلي", hex: "rgba(30, 58, 138, 0.85)" },
+                  { name: "كرمزي", hex: "rgba(131, 24, 67, 0.85)" },
+                  { name: "زيتي", hex: "rgba(6, 78, 59, 0.85)" },
                 ].map((c) => (
                   <button
                     type="button"
@@ -275,7 +254,6 @@ export default function Home() {
                       background: c.hex,
                       border: cardColor === c.hex ? "2px solid #38bdf8" : "1px solid rgba(255,255,255,0.2)",
                       cursor: "pointer",
-                      transition: "all 0.2s",
                       transform: cardColor === c.hex ? "scale(1.2)" : "scale(1)"
                     }}
                     title={c.name}
@@ -307,7 +285,6 @@ export default function Home() {
               />
             </div>
 
-            {/* معاينة الرسالة Live Preview */}
             {message.trim() && (
               <div style={{ marginBottom: "20px" }}>
                 <span style={{ fontSize: "0.88rem", color: "#38bdf8", display: "block", marginBottom: "6px" }}>
@@ -318,8 +295,7 @@ export default function Home() {
                     background: cardColor,
                     border: "1px solid rgba(255,255,255,0.15)",
                     borderRadius: "14px",
-                    padding: "16px",
-                    backdropFilter: "blur(10px)"
+                    padding: "16px"
                   }}
                 >
                   <div style={{ fontWeight: "bold", fontSize: "1rem", color: "#38bdf8" }}>
@@ -340,20 +316,18 @@ export default function Home() {
                 width: "100%",
                 padding: "14px",
                 borderRadius: "10px",
-                background: "#0284c7",
+                    background: "#0284c7",
                 color: "#fff",
                 fontWeight: "bold",
                 border: "none",
                 cursor: loading ? "not-allowed" : "pointer",
-                fontSize: "1rem",
-                boxShadow: "0 4px 14px rgba(2, 132, 199, 0.4)"
+                fontSize: "1rem"
               }}
             >
               {loading ? "جاري الإرسال..." : "إرسال الرسالة 🚀"}
             </button>
           </form>
 
-          {/* عرض الرسائل */}
           <section>
             <h2 style={{ fontSize: "1.3rem", marginBottom: "20px", fontWeight: "bold" }}>
               الرسائل والذكريات ({letters.length})
@@ -364,7 +338,7 @@ export default function Home() {
                 <div
                   key={item.id}
                   style={{
-                    background: item.cardColor || "rgba(15, 23, 42, 0.65)",
+                    background: item.cardColor || "rgba(15, 23, 42, 0.75)",
                     backdropFilter: "blur(12px)",
                     border: "1px solid rgba(255, 255, 255, 0.1)",
                     borderRadius: "14px",
