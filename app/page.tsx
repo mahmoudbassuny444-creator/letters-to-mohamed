@@ -256,16 +256,18 @@ export default function Home() {
                 borderRadius: "50%",
                 padding: "3px",
                 background: "linear-gradient(45deg, #38bdf8, #818cf8)",
-                boxShadow: "0 0 20px rgba(56, 189, 248, 0.4)"
+                boxShadow: "0 0 20px rgba(56, 189, 248, 0.4)",
+                overflow: "hidden"
               }}>
                 <img
                   src="/mohamed.jpg" 
-                  alt="المهندس محمد حازم"
+                  alt=""
                   style={{
                     width: "100%",
                     height: "100%",
                     borderRadius: "50%",
-                    objectFit: "cover"
+                    objectFit: "cover",
+                    display: "block"
                   }}
                 />
               </div>
