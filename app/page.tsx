@@ -246,11 +246,35 @@ export default function Home() {
             </div>
           )}
 
-          <header style={{ textAlign: "center", marginBottom: "25px" }}>
-            <h1 style={{ fontSize: "2rem", fontWeight: "bold", marginBottom: "10px" }}>
+          <header style={{ textAlign: "center", marginBottom: "30px", marginTop: "15px" }}>
+            
+            {/* عرض صورة المهندس محمد حازم */}
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
+              <div style={{
+                width: "110px",
+                height: "110px",
+                borderRadius: "50%",
+                padding: "3px",
+                background: "linear-gradient(45deg, #38bdf8, #818cf8)",
+                boxShadow: "0 0 20px rgba(56, 189, 248, 0.4)"
+              }}>
+                <img
+                  src="/mohamed.jpg" 
+                  alt="المهندس محمد حازم"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: "50%",
+                    objectFit: "cover"
+                  }}
+                />
+              </div>
+            </div>
+
+            <h1 style={{ fontSize: "1.9rem", fontWeight: "bold", marginBottom: "8px" }}>
               رسائل تيم Insider للمهندس محمد حازم ❤️
             </h1>
-            <p style={{ color: "#94a3b8", fontSize: "0.95rem" }}>
+            <p style={{ color: "#94a3b8", fontSize: "0.9rem" }}>
               شارك بكلمتك أو ذكرياتك مع المهندس محمد حازم (الرسائل سرية وتصل للمهندس فقط)
             </p>
           </header>
@@ -409,7 +433,7 @@ export default function Home() {
                           style={{
                             background: "#ef4444",
                             color: "#fff",
-                            border: "none",
+                            border: "1px solid transparent",
                             padding: "6px 10px",
                             borderRadius: "8px",
                             cursor: "pointer",
