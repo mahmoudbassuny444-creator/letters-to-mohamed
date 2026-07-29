@@ -14,7 +14,6 @@ import {
   increment,
   deleteDoc
 } from "firebase/firestore";
-import confetti from "canvas-confetti";
 
 interface Letter {
   id: string;
@@ -71,12 +70,6 @@ export default function Home() {
         cardColor: cardColor,
         likes: 0,
         createdAt: serverTimestamp(),
-      });
-
-      confetti({
-        particleCount: 120,
-        spread: 80,
-        origin: { y: 0.6 }
       });
 
       setSenderName("");
