@@ -34,6 +34,12 @@ export default function Home() {
   const [letters, setLetters] = useState<Letter[]>([]);
   const [loading, setLoading] = useState(false);
   const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
+  
+  // نظام الأدمن والباسورد المحدث
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
+  const ADMIN_PASSWORD = "19112001";
 
   const fetchLetters = async () => {
     try {
@@ -101,6 +107,28 @@ export default function Home() {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    if (!isAdmin) return;
+    try {
+      await deleteDoc(doc(db, "letters", id));
+      setLetters((prev) => prev.filter((item) => item.id !== id));
+    } catch (error) {
+      console.error("Error deleting letter:", error);
+    }
+  };
+
+  const handleAdminLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwordInput === ADMIN_PASSWORD) {
+      setIsAdmin(true);
+      setShowPasswordModal(false);
+      setPasswordInput("");
+      alert("تم تسجيل الدخول كأدمن بنجاح! 🔓");
+    } else {
+      alert("كلمة المرور غير صحيحة ❌");
+    }
+  };
+
   const handleRandomLetter = () => {
     if (letters.length === 0) return;
     const randomIndex = Math.floor(Math.random() * letters.length);
@@ -132,7 +160,7 @@ export default function Home() {
       >
         <div style={{ maxWidth: "650px", margin: "0 auto" }}>
           
-          <div style={{ textAlign: "center", marginBottom: "12px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
             <span
               style={{
                 background: "rgba(56, 189, 248, 0.12)",
@@ -145,7 +173,89 @@ export default function Home() {
             >
               🚀 Insider Team Memory Wall
             </span>
+
+            {!isAdmin ? (
+              <button
+                onClick={() => setShowPasswordModal(true)}
+                style={{
+                  background: "transparent",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  color: "#94a3b8",
+                  padding: "4px 12px",
+                  borderRadius: "15px",
+                  fontSize: "0.75rem",
+                  cursor: "pointer"
+                }}
+              >
+                🔐 دخول أدمن
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsAdmin(false)}
+                style={{
+                  background: "rgba(239, 68, 68, 0.2)",
+                  border: "1px solid #ef4444",
+                  color: "#ef4444",
+                  padding: "4px 12px",
+                  borderRadius: "15px",
+                  fontSize: "0.75rem",
+                  cursor: "pointer"
+                }}
+              >
+                🔒 تسجيل خروج الأدمن
+              </button>
+            )}
           </div>
+
+          {showPasswordModal && (
+            <div style={{
+              background: "rgba(0,0,0,0.85)",
+              position: "fixed",
+              top: 0, left: 0, right: 0, bottom: 0,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 1000,
+              padding: "20px"
+            }}>
+              <form onSubmit={handleAdminLogin} style={{
+                background: "#1e293b",
+                padding: "24px",
+                borderRadius: "16px",
+                border: "1px solid rgba(56, 189, 248, 0.3)",
+                width: "100%",
+                maxWidth: "350px",
+                textAlign: "center"
+              }}>
+                <h3 style={{ marginBottom: "15px", color: "#38bdf8" }}>أدخل باسورد الأدمن 🔑</h3>
+                <input
+                  type="password"
+                  placeholder="كلمة المرور..."
+                  value={passwordInput}
+                  onChange={(e) => setPasswordInput(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "10px",
+                    borderRadius: "8px",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                    background: "rgba(0,0,0,0.4)",
+                    color: "#fff",
+                    marginBottom: "15px",
+                    outline: "none"
+                  }}
+                  autoFocus
+                />
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <button type="submit" style={{ flex: 1, padding: "10px", background: "#0284c7", color: "#fff", border: "none", borderRadius: "8px", fontWeight: "bold", cursor: "pointer" }}>
+                    دخول
+                  </button>
+                  <button type="button" onClick={() => setShowPasswordModal(false)} style={{ flex: 1, padding: "10px", background: "rgba(255,255,255,0.1)", color: "#fff", border: "none", borderRadius: "8px", cursor: "pointer" }}>
+                    إلغاء
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
 
           <header style={{ textAlign: "center", marginBottom: "25px" }}>
             <h1 style={{ fontSize: "2rem", fontWeight: "bold", marginBottom: "10px" }}>
@@ -316,7 +426,7 @@ export default function Home() {
                 width: "100%",
                 padding: "14px",
                 borderRadius: "10px",
-                    background: "#0284c7",
+                background: "#0284c7",
                 color: "#fff",
                 fontWeight: "bold",
                 border: "none",
@@ -330,54 +440,90 @@ export default function Home() {
 
           <section>
             <h2 style={{ fontSize: "1.3rem", marginBottom: "20px", fontWeight: "bold" }}>
-              الرسائل والذكريات ({letters.length})
+              الرسائل والذكريات 💬
             </h2>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-              {letters.map((item) => (
-                <div
-                  key={item.id}
-                  style={{
-                    background: item.cardColor || "rgba(15, 23, 42, 0.75)",
-                    backdropFilter: "blur(12px)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
-                    borderRadius: "14px",
-                    padding: "20px",
-                    boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
-                  }}
-                >
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
-                    <div>
-                      <h3 style={{ margin: 0, fontSize: "1.1rem", color: "#38bdf8" }}>{item.senderName}</h3>
-                      <span style={{ fontSize: "0.8rem", color: "#94a3b8" }}>{item.role}</span>
+            {!isAdmin ? (
+              <div style={{
+                background: "rgba(15, 23, 42, 0.6)",
+                border: "1px dashed rgba(255,255,255,0.2)",
+                borderRadius: "14px",
+                padding: "30px",
+                textAlign: "center",
+                color: "#94a3b8"
+              }}>
+                <p style={{ fontSize: "1.05rem", marginBottom: "10px" }}>🔒 حائط الرسائل مخفي حالياً لحفظ الخصوصية.</p>
+                <p style={{ fontSize: "0.85rem" }}>إذا كنت المهندس محمد حازم أو الأدمن، اضغط على زر <b>"دخول أدمن"</b> فوق خالص وأدخل كلمة المرور لقراءة الحائط بالكامل.</p>
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                <div style={{ background: "rgba(34, 197, 94, 0.15)", border: "1px solid #22c55e", padding: "10px 15px", borderRadius: "10px", color: "#22c55e", fontSize: "0.9rem", textAlign: "center" }}>
+                  🔓 أنت مسجل كأدمن الآن. عدد الرسائل الكلي: ({letters.length})
+                </div>
+
+                {letters.map((item) => (
+                  <div
+                    key={item.id}
+                    style={{
+                      background: item.cardColor || "rgba(15, 23, 42, 0.75)",
+                      backdropFilter: "blur(12px)",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      borderRadius: "14px",
+                      padding: "20px",
+                      boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
+                      <div>
+                        <h3 style={{ margin: 0, fontSize: "1.1rem", color: "#38bdf8" }}>{item.senderName}</h3>
+                        <span style={{ fontSize: "0.8rem", color: "#94a3b8" }}>{item.role}</span>
+                      </div>
+
+                      <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                        <button
+                          onClick={() => handleLike(item.id)}
+                          style={{
+                            background: likedPosts[item.id] ? "rgba(239, 68, 68, 0.2)" : "rgba(255,255,255,0.08)",
+                            border: "none",
+                            borderRadius: "20px",
+                            padding: "6px 12px",
+                            color: likedPosts[item.id] ? "#ef4444" : "#fff",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "6px",
+                            fontSize: "0.85rem"
+                          }}
+                        >
+                          <span>{likedPosts[item.id] ? "❤️" : "🤍"}</span>
+                          <span>{item.likes || 0}</span>
+                        </button>
+
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          style={{
+                            background: "#ef4444",
+                            color: "#fff",
+                            border: "none",
+                            padding: "6px 10px",
+                            borderRadius: "8px",
+                            cursor: "pointer",
+                            fontSize: "0.8rem"
+                          }}
+                          title="حذف الرسالة"
+                        >
+                          🗑️
+                        </button>
+                      </div>
                     </div>
 
-                    <button
-                      onClick={() => handleLike(item.id)}
-                      style={{
-                        background: likedPosts[item.id] ? "rgba(239, 68, 68, 0.2)" : "rgba(255,255,255,0.08)",
-                        border: "none",
-                        borderRadius: "20px",
-                        padding: "6px 12px",
-                        color: likedPosts[item.id] ? "#ef4444" : "#fff",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        fontSize: "0.85rem"
-                      }}
-                    >
-                      <span>{likedPosts[item.id] ? "❤️" : "🤍"}</span>
-                      <span>{item.likes || 0}</span>
-                    </button>
+                    <p style={{ lineHeight: "1.6", whiteSpace: "pre-wrap", margin: "10px 0 0 0" }}>
+                      {item.message}
+                    </p>
                   </div>
-
-                  <p style={{ lineHeight: "1.6", whiteSpace: "pre-wrap", margin: "10px 0 0 0" }}>
-                    {item.message}
-                  </p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </section>
         </div>
       </main>
