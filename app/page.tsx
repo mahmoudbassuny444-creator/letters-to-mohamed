@@ -260,8 +260,8 @@ export default function Home() {
                 overflow: "hidden"
               }}>
                 <img
-                  src="/mohamed.jpg" 
-                  alt=""
+                  src="https://i.ibb.co/wrbf3gDN/mohamed.jpg" 
+                  alt="المهندس محمد حازم"
                   style={{
                     width: "100%",
                     height: "100%",
