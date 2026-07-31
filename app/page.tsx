@@ -21,7 +21,6 @@ interface Letter {
   role: string;
   message: string;
   likes?: number;
-  cardColor?: string;
   createdAt?: any;
 }
 
@@ -29,7 +28,6 @@ export default function Home() {
   const [senderName, setSenderName] = useState("");
   const [role, setRole] = useState("");
   const [message, setMessage] = useState("");
-  const [cardColor, setCardColor] = useState("rgba(15, 23, 42, 0.75)");
   const [letters, setLetters] = useState<Letter[]>([]);
   const [loading, setLoading] = useState(false);
   const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
@@ -37,7 +35,27 @@ export default function Home() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordInput, setPasswordInput] = useState("");
-  const ADMIN_PASSWORD = "19112001";
+  const ADMIN_PASSWORD = "191120010"; // تم تحديث كلمة المرور هنا
+
+  // دالة لتوزيع ألوان اللجان بدقة بناءً على ما كتبه العضو في خانة اللجنة
+  const getRoleCardColor = (roleText: string) => {
+    if (!roleText) return "rgba(15, 23, 42, 0.75)";
+    const r = roleText.toLowerCase().trim();
+
+    if (r.includes("oc")) {
+      return "rgba(107, 33, 168, 0.45)"; // بنفسجي للـ OC
+    } else if (r.includes("hr")) {
+      return "rgba(14, 116, 144, 0.45)"; // أزرق سماوي للـ HR
+    } else if (r.includes("content") || r.includes("كونتنت") || r.includes("محتوى")) {
+      return "rgba(6, 95, 70, 0.45)"; // أخضر للكونتنت
+    } else if (r.includes("market") || r.includes("ماركتينج") || r.includes("تسويق")) {
+      return "rgba(180, 83, 9, 0.45)"; // برتقالي للماركتينج
+    } else if (r.includes("press") || r.includes("صحافه") || r.includes("صحافة") || r.includes("ميديا") || r.includes("media")) {
+      return "rgba(190, 24, 93, 0.45)"; // وردي/فوشيا للصحافة
+    }
+
+    return "rgba(15, 23, 42, 0.75)"; // لون افتراضي لأي لجنة تانية
+  };
 
   const fetchLetters = async () => {
     try {
@@ -67,7 +85,6 @@ export default function Home() {
         senderName: senderName.trim() || "فاعل خير 🕵️‍♂️",
         role: role.trim() || "عضو في التيم",
         message: message.trim(),
-        cardColor: cardColor,
         likes: 0,
         createdAt: serverTimestamp(),
       });
@@ -320,11 +337,11 @@ export default function Home() {
 
             <div style={{ marginBottom: "16px" }}>
               <label style={{ display: "block", marginBottom: "8px", fontSize: "0.9rem", color: "#e2e8f0" }}>
-                دورك في التيم / القسم:
+                لجنتك (OC, HR, Content, Marketing, Press):
               </label>
               <input
                 type="text"
-                placeholder="مثال: HR / OC"
+                placeholder="اكتب اسم لجنتك..."
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
                 style={{
@@ -396,9 +413,9 @@ export default function Home() {
                   <div
                     key={item.id}
                     style={{
-                      background: item.cardColor || "rgba(15, 23, 42, 0.75)",
+                      background: getRoleCardColor(item.role),
                       backdropFilter: "blur(12px)",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      border: "1px solid rgba(255, 255, 255, 0.2)",
                       borderRadius: "14px",
                       padding: "20px",
                       boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
@@ -407,7 +424,9 @@ export default function Home() {
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
                       <div>
                         <h3 style={{ margin: 0, fontSize: "1.1rem", color: "#38bdf8" }}>{item.senderName}</h3>
-                        <span style={{ fontSize: "0.8rem", color: "#94a3b8" }}>{item.role}</span>
+                        <span style={{ fontSize: "0.85rem", color: "#e2e8f0", fontWeight: "bold", background: "rgba(0,0,0,0.3)", padding: "2px 8px", borderRadius: "6px", display: "inline-block", marginTop: "4px" }}>
+                          {item.role}
+                        </span>
                       </div>
 
                       <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
